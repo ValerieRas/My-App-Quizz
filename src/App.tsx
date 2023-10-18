@@ -1,16 +1,21 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import ResultsPage from './Components/Results';
+import QuizPage from './Components/Quizz';
+import WelcomePage from './Components/Welcome';
+import QuestionList from './Components/QuestionList';
+import { Question } from "./Models/QuestionModel";
 
 function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-      </header>
-      <body>
-        
-      </body>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/Quizz" element={<QuizPage />} />
+        <Route path="/results" element={<ResultsPage />} />
+      </Routes>
+    </Router>
   );
 }
 
