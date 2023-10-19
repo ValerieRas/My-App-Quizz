@@ -10,10 +10,14 @@ const QuizPage: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
 
   useEffect(() => {
+    
     const fetchQuestions = async () => {
       try {
+
         const response = await getQuestions();
+        
         setQuestions(response.data);
+
       } catch (error) {
         console.error('Error fetching questions:', error);
       }
@@ -42,6 +46,8 @@ const QuizPage: React.FC = () => {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
+  console.log(currentQuestion);
+
 
   return (
     <div>

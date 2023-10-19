@@ -7,8 +7,6 @@ const WelcomePage: React.FC = () => {
 
       <h1>Come test yourself !</h1>
 
-      <h1>{process.env.REACT_APP_API_BASE_URL}</h1>
-
       <Link to="/Quizz">
         <button>Start Quiz</button>
       </Link>
