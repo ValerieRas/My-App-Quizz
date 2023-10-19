@@ -5,10 +5,11 @@ export interface Question {
     badAnswers: string[];
     category:string;
     difficulty: string;
-  }
+  };
   
 
-export  interface Choice {
-    _id: number;
-    text: string;
-  }
+// Interface for the API response
+export interface ApiResponse {
+  count: number;
+  quizzes: Question[];
+} 

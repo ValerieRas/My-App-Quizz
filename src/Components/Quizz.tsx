@@ -1,72 +1,104 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Question } from '../Models/QuestionModel';
+import { Question, ApiResponse } from '../Models/QuestionModel';
 import { getQuestions } from '../Services/QuestionService';
+import '../styles.css';
 
 const QuizPage: React.FC = () => {
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<string>('');
+  const [selectedAnswer, setSelectedAnswer] = useState<string[]>([]);
 
   useEffect(() => {
-    
+
     const fetchQuestions = async () => {
+
       try {
 
         const response = await getQuestions();
-        
-        setQuestions(response.data);
+
+        const ApiQuestion: ApiResponse = response.data;
+
+        setQuestions(ApiQuestion.quizzes);
+
+        setSelectedAnswer(new Array(ApiQuestion.quizzes.length).fill(''));
 
       } catch (error) {
+
         console.error('Error fetching questions:', error);
+
       }
     };
 
     fetchQuestions();
   }, []);
 
+
+
   const handleNextQuestion = () => {
-    if (selectedAnswer !== '') {
+
+    const currentAnswer = selectedAnswer[currentQuestionIndex];
+
+    if ( currentAnswer !== undefined && currentAnswer !== '') {
+
       if (currentQuestionIndex + 1 < questions.length) {
+
         setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedAnswer('');
-      } else {
-        // End of the quiz, navigate to the results page
-        navigate('./Results');
+
       }
-    } else {
+      else {
+        // End of the quiz, navigate to the results page
+        navigate('../Results', { state: { selectedAnswer, questions } });
+      }
+
+    }
+    else {
       alert('Veuillez choisir une réponse');
     }
   };
 
+
+
   const handleAnswerSelect = (answer: string) => {
     // Handle user answer selection
-    setSelectedAnswer(answer);
+    setSelectedAnswer(prevAnswers => {
+
+      const updatedSelectedAnswers = [...prevAnswers];
+
+      updatedSelectedAnswers[currentQuestionIndex] = answer;
+   
+      return updatedSelectedAnswers;
+
+    });
+    
   };
 
   const currentQuestion = questions[currentQuestionIndex];
-  console.log(currentQuestion);
 
 
   return (
-    <div>
-      <h2>Question {currentQuestionIndex + 1}</h2>
-      <h3>{currentQuestion?.question}</h3>
-      <ul>
-        {currentQuestion?.badAnswers.concat(currentQuestion?.answer).map((answer, index) => (
-          <li
-            key={index}
-            onClick={() => handleAnswerSelect(answer)}
-            style={{ cursor: 'pointer', backgroundColor: selectedAnswer === answer ? 'lightgray' : 'white' }}
-          >
-            {answer}
-          </li>
-        ))}
-      </ul>
-      <button onClick={handleNextQuestion} disabled={selectedAnswer === ''}>
-        Next Question
-      </button>
+    <div className="bg-image">
+      <div className="container">
+        <h2>Question {currentQuestionIndex + 1}</h2>
+        <div className="question-container">
+          <h3>{currentQuestion?.question}</h3>
+          <ul>
+            {currentQuestion?.badAnswers.concat(currentQuestion?.answer).map((answer, index) => (
+              <li
+                key={index}
+                onClick={() => handleAnswerSelect(answer)}
+                style={{ cursor: 'pointer', backgroundColor: selectedAnswer[currentQuestionIndex] === answer ? 'rgba(89, 146, 83, 0.8)' : '' }}
+              >
+                {answer}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <button className="Next-btn" onClick={handleNextQuestion}>
+          Suivant
+        </button>
+      </div>
     </div>
   );
 };
